@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+"""
+This module contains all the custom exception classes
+used in this flask application.
+"""
+
+
 class ResourceNotAvailable(Exception):
     """Exception raised for GitHub API calls.
 
@@ -9,4 +16,3 @@ class ResourceNotAvailable(Exception):
         self.message = message
         self.status_code = status_code
         super().__init__(self.message)
-

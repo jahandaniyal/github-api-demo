@@ -1,21 +1,33 @@
+# -*- coding: utf-8 -*-
+"""
+The main entry point for this flask application.
+Registers blueprint for /api route and additionally,
+configures flasgger and prometheus for metrics collection.
+"""
+
 from flask import Flask
 from flasgger import Swagger
-from api.route.main import app_api
 from prometheus_flask_exporter import PrometheusMetrics
+
+from api.route.main import app_api
 
 
 def create_app():
-    app = Flask(__name__)
+    """
+    Configure flask application routes, swagger and prometheus
+    :return: flask object
+    """
+    flask_app = Flask(__name__)
 
     # Initialize Config
-    app.config['SWAGGER'] = {
+    flask_app.config['SWAGGER'] = {
         'title': 'GitHub API Demo App',
     }
-    app.register_blueprint(app_api, url_prefix='/api')
-    Swagger(app)
-    PrometheusMetrics(app)
+    flask_app.register_blueprint(app_api, url_prefix='/api')
+    Swagger(flask_app)
+    PrometheusMetrics(flask_app)
 
-    return app
+    return flask_app
 
 
 if __name__ == '__main__':

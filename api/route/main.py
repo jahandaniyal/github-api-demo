@@ -1,5 +1,11 @@
-from flask import Blueprint, jsonify, request
+# -*- coding: utf-8 -*-
+"""
+This module contains views for popularity check functionality.
+"""
+
 from http import HTTPStatus
+
+from flask import Blueprint, jsonify, request
 
 from api.utils.github_helper import GitHubAPI, ResourceNotAvailable
 
@@ -57,7 +63,8 @@ def github_repo_stats(owner, repo):
             application/json: |
                 {
                     "error": {
-                        "documentation_url": "https://docs.github.com/rest/reference/repos#get-a-repository",
+                        "documentation_url":
+                            "https://docs.github.com/rest/reference/repos#get-a-repository",
                         "message": "Not Found"
                     }
                 }
@@ -68,10 +75,10 @@ def github_repo_stats(owner, repo):
     gitstats = GitHubAPI(owner, repo, request.headers.get('X-Github-Token'))
     try:
         gitstats.get_repo()
-        result, message = gitstats.is_popular()
+        _, message = gitstats.is_popular()
     except ResourceNotAvailable as rna:
         return jsonify({"error": rna.message}), rna.status_code
     except Exception as ex:
-        return jsonify({"error": ex.message}), HTTPStatus.INTERNAL_SERVER_ERROR
+        return jsonify({"error": str(ex)}), HTTPStatus.INTERNAL_SERVER_ERROR
     else:
         return jsonify(message), HTTPStatus.OK
