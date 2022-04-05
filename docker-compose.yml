@@ -1,0 +1,20 @@
+version: "3.5"
+
+services:
+  flask-app:
+    build:
+      context: ./api
+    image: flask-app
+    restart: unless-stopped
+    command: python -u app.py
+    container_name: flask-app
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/app
+
+  test:
+    image: flask-app
+    command: python -m pytest
+    volumes:
+      - .:/app
