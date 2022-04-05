@@ -1,0 +1,64 @@
+version: "3.5"
+
+services:
+  flask-app:
+    build:
+      context: ./api
+    image: flask-app
+    restart: unless-stopped
+    command: python -u app.py
+    container_name: flask-app
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/app
+    networks:
+      demo-network:
+        ipv4_address: 172.16.238.10
+
+  test:
+    image: flask-app
+    command: python -m pytest
+    volumes:
+      - .:/app
+
+  prometheus-service:
+    image: prom/prometheus:latest
+    restart: unless-stopped
+    container_name: prometheus-service
+    ports:
+      - 9090:9090
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    networks:
+      demo-network:
+        ipv4_address: 172.16.238.11
+
+  grafana-service:
+    image: grafana/grafana:latest
+    restart: unless-stopped
+    user: "472"
+    container_name: grafana-service
+    depends_on:
+      - prometheus-service
+    ports:
+      - 3000:3000
+    volumes:
+      - ./monitoring/datasource.yml:/etc/grafana/provisioning/datasource.yml
+    env_file:
+      - ./monitoring/config.monitoring
+    networks:
+      demo-network:
+        ipv4_address: 172.16.238.12
+
+networks:
+  demo-network:
+    name: demo-network
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.16.238.0/24
+
