@@ -1,6 +1,7 @@
 from flask import Flask
 from flasgger import Swagger
 from api.route.main import app_api
+from prometheus_flask_exporter import PrometheusMetrics
 
 
 def create_app():
@@ -12,6 +13,7 @@ def create_app():
     }
     app.register_blueprint(app_api, url_prefix='/api')
     Swagger(app)
+    PrometheusMetrics(app)
 
     return app
 
