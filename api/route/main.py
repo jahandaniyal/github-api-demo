@@ -18,6 +18,53 @@ def ping_server():
 
 @app_api.route('/stats/<owner>/<repo>', methods=['GET'])
 def github_repo_stats(owner, repo):
+    """
+    # Stats endpoint API Specification
+    # Return a string message
+
+    ---
+    parameters:
+      - name: owner
+        in: path
+        type: string
+        required: true
+        description: Must be an active GitHub Account
+      - name: repo
+        in: path
+        type: string
+        required: true
+        description: Must be a valid Git repository
+      - name: X-Github-Token
+        in: header
+        schema:
+            type: string
+        required: false
+        description: GitHub API Token
+    definitions:
+          Popularity:
+            type: string
+    responses:
+      200:
+        description: Returns True if a repository is popular else False.
+        examples:
+            application/json: |
+              {
+                popular: True
+              }
+      404:
+        description:
+        examples:
+            application/json: |
+                {
+                    "error": {
+                        "documentation_url": "https://docs.github.com/rest/reference/repos#get-a-repository",
+                        "message": "Not Found"
+                    }
+                }
+    :param owner (str): GitHub Account name
+    :param repo (str): Git Repository name
+    :return (bool): True is repository is popular else False
+    """
     gitstats = GitHubAPI(owner, repo, request.headers.get('X-Github-Token'))
     try:
         gitstats.get_repo()
