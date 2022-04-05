@@ -43,9 +43,9 @@ class TestPopularityApp:
 
         # Test invalid GitHub token fails
         url = '/api/stats/jahandaniyal/Algorithms-CC'
-        response = client.get(url, headers='invalid_token_example')
-        assert response.get_json()['error']['message'] == 'Not Found'
-        assert response.status_code == 404
+        response = client.get(url, headers={'X-Github-Token': 'invalid_token_example'})
+        assert response.get_json()['error']['message'] == 'Bad credentials'
+        assert response.status_code == 401
 
     def test_invalid_owner_fails(self, client):
         """
