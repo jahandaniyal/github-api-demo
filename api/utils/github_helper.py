@@ -1,13 +1,11 @@
 import requests
-import os, json
-from pprint import pprint
+import os
 
 from api.schema.popularity import PopularitySchema
 from api.utils.custom_exceptions import ResourceNotAvailable
 
 _TOKEN = os.getenv('GITHUB_TOKEN')
 _GITHUB_REPOS_BASE_URL = "https://api.github.com/repos/"
-
 
 
 class GitHubAPI:
@@ -26,10 +24,9 @@ class GitHubAPI:
         data = PopularitySchema().load(req.json(), unknown='exclude')
         self.forks_count = data.get('forks')
         self.stars_count = data.get('stars')
-        # pprint(req.json())
         return req
 
     def is_popular(self):
         if self.forks_count * 2 + self.stars_count >= 500:
-            return True, "{}'s repository '{}' is popular ".format(self.owner, self.repo)
-        return False, "{}'s repository '{}' is NOT popular".format(self.owner, self.repo)
+            return True, {"popular": True}
+        return False, {"popular": False}
