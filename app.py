@@ -1,12 +1,17 @@
 from flask import Flask
+from flasgger import Swagger
 from api.route.main import app_api
 
 
 def create_app():
     app = Flask(__name__)
 
-     ## Initialize Config
+    # Initialize Config
+    app.config['SWAGGER'] = {
+        'title': 'GitHub API Demo App',
+    }
     app.register_blueprint(app_api, url_prefix='/api')
+    Swagger(app)
 
     return app
 
